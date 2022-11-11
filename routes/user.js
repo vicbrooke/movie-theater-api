@@ -49,32 +49,23 @@ userRouter.get("/:id/shows", getSingleUser, async (req, res) => {
 // if show does not exist, return 404 not found status
 userRouter.put(
   "/:id/shows/:showId",
-  // Server side validation to check that rating input is a number
-  body("rating").matches(/\d/).withMessage("Rating must be a number"),
-  body("status")
-    .isLength({ min: 5, max: 25 })
-    .withMessage("Status must be between 5 and 25 characters")
-    .matches(/^[a-zA-Z-]+$/)
-    .withMessage("Status can only contain letters"),
+
   getSingleUser,
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).send({ errors: errors.array() });
-    }
     const { singleUser } = req;
     const showToUpdate = await Show.findByPk(req.params.showId);
     if (!singleUser || !showToUpdate) {
       return res.status(404).send("Not found");
     }
-    const updatedShow = await showToUpdate.update(req.body, {
-      where: {
-        id: req.params.showId,
-      },
-    });
-    if (updatedShow.status === "watched") {
-      await singleUser.addShow(updatedShow);
-    }
+    const updatedShow = await showToUpdate.update(
+      { status: "watched" },
+      {
+        where: {
+          id: req.params.showId,
+        },
+      }
+    );
+    await singleUser.addShow(updatedShow);
     res.status(202).send(updatedShow);
   }
 );
