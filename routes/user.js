@@ -2,7 +2,6 @@ const { Router } = require("express");
 const { User, Show } = require("../models");
 const userRouter = Router();
 const { getSingleUser } = require("../middleware/helper-functions");
-const { body, validationResult } = require("express-validator");
 
 // GET all users
 // send 302 found status if successful
