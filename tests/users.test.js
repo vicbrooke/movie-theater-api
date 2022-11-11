@@ -45,16 +45,14 @@ describe("User route", () => {
     });
     describe("/:id/shows endpoint", () => {
       beforeEach(async () => {
-        const show = await request(app)
-          .put("/users/1/shows/1")
-          .send({ rating: 3, status: "watched" });
+        const show = await request(app).put("/users/1/shows/1");
+
         res = await request(app).get("/users/1/shows");
       });
       test("should respond with 202 accepted status with valid user and show ids", () => {
         expect(res.statusCode).toBe(202);
       });
       test("should respond with updated show object", () => {
-        expect(res.body[0].rating).toBe(3);
         expect(res.body[0].status).toBe("watched");
       });
       test("should respond with 404 if invalid user or show ids", async () => {
@@ -83,31 +81,8 @@ describe("User route", () => {
           .send({ rating: 10, status: "watched" });
         expect(res.statusCode).toBe(404);
       });
-      test("should return a 400 status and error message if given invalid rating value", async () => {
-        res = await request(app)
-          .put("/users/1/shows/1")
-          .send({ rating: "b", status: "watched" });
-        expect(res.statusCode).toBe(400);
-        expect(res.body.errors[0].msg).toBe("Rating must be a number");
-      });
-      test("should return 400 status and error message if given too short status value", async () => {
-        res = await request(app)
-          .put("/users/1/shows/1")
-          .send({ rating: 10, status: "hi" });
-        expect(res.body.errors[0].msg).toBe(
-          "Status must be between 5 and 25 characters"
-        );
-      });
-      test("should return 400 status and error message if given invalid status value", async () => {
-        res = await request(app)
-          .put("/users/1/shows/1")
-          .send({ rating: 10, status: "123445" });
-        expect(res.body.errors[0].msg).toBe("Status can only contain letters");
-      });
       test("should add a show to a user if ids are valid and status is set to watched", async () => {
-        res = await request(app)
-          .put("/users/1/shows/1")
-          .send({ rating: 10, status: "watched" });
+        res = await request(app).put("/users/1/shows/1");
         const user1 = await User.findByPk(1);
         const user1Shows = await user1.getShows();
         expect(user1Shows[0].toJSON().id).toBe(1);

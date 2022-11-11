@@ -1,5 +1,4 @@
 const request = require("supertest");
-const { User, Show } = require("../models");
 const seed = require("../seed");
 const app = require("../src/server");
 const express = require("express");
@@ -65,6 +64,14 @@ describe("Show route", () => {
   });
 
   describe("PUT requests", () => {
+    describe("/shows/:listLocation/watched", () => {
+      test.skip("should return 200 status when given a show exists in given location", async () => {
+        await request(app).put("/users/1/shows/1").send({ rating: 3 });
+        const res = await request(app).put("/shows/1/watched");
+        console.log(res.body);
+        expect(res.statusCode).toBe(200);
+      });
+    });
     describe("/shows/:id/updates endpoint", () => {
       test("should respond with 200 status code when given valid id", async () => {
         const res = await request(app).put("/shows/1/updates");
@@ -78,14 +85,16 @@ describe("Show route", () => {
   });
 
   describe("DELETE requests", () => {
-    test("should respond with 204 status", async () => {
-      const res = await request(app).delete("/shows/1/delete");
-      expect(res.statusCode).toBe(204);
-    });
-    test("should respond with 404 show not found message if given an invalid show id", async () => {
-      const res = await request(app).delete("/shows/99/delete");
-      expect(res.statusCode).toBe(404);
-      expect(res.text).toBe("Show not found");
+    describe("/shows/:id/delete endpoint", () => {
+      test("should respond with 204 status", async () => {
+        const res = await request(app).delete("/shows/1/delete");
+        expect(res.statusCode).toBe(204);
+      });
+      test("should respond with 404 show not found message if given an invalid show id", async () => {
+        const res = await request(app).delete("/shows/99/delete");
+        expect(res.statusCode).toBe(404);
+        expect(res.text).toBe("Show not found");
+      });
     });
   });
 });

@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { body } = require("express-validator");
+const { body, validationResult } = require("express-validator");
 const { getSingleShow } = require("../middleware/helper-functions");
 const { Show } = require("../models");
 
