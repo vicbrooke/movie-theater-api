@@ -5,23 +5,26 @@ const { getSingleUser } = require("../middleware/helper-functions");
 const { body, validationResult } = require("express-validator");
 
 // GET all users
+// send 302 found status if successful
 userRouter.get("/", async (req, res) => {
   const allUsers = await User.findAll();
-  res.send(allUsers);
+  res.status(302).send(allUsers);
 });
 
 // GET one user - using an endpoint
+// send 302 found status if successful
 // if user does not exist, return 404 not found status
 userRouter.get("/:id", getSingleUser, async (req, res) => {
   const { singleUser } = req;
   if (!singleUser) {
     res.status(404).send("User not found");
   } else {
-    res.send(singleUser);
+    res.status(302).send(singleUser);
   }
 });
 
 // GET all shows watched by one user
+// send 202 accepted status if successful
 // if user does not exist, return 404 not found status
 // if user has no watched shows, return 404 not found status
 userRouter.get("/:id/shows", getSingleUser, async (req, res) => {
@@ -35,12 +38,13 @@ userRouter.get("/:id/shows", getSingleUser, async (req, res) => {
     if (singleUserShows.length === 0) {
       res.status(404).send(`No shows found for ${singleUser.username}`);
     } else {
-      res.send(singleUserShows);
+      res.status(202).send(singleUserShows);
     }
   }
 });
 
 // PUT update and add a show if a user has watched it
+// send 202 accepted status if successful
 // if user does not exist, return 404 not found status
 // if show does not exist, return 404 not found status
 userRouter.put(
@@ -50,7 +54,7 @@ userRouter.put(
   body("status")
     .isLength({ min: 5, max: 25 })
     .withMessage("Status must be between 5 and 25 characters")
-    .matches(/^[a-zA-Z]$/)
+    .matches(/^[a-zA-Z-]+$/)
     .withMessage("Status can only contain letters"),
   getSingleUser,
   async (req, res) => {
@@ -71,7 +75,7 @@ userRouter.put(
     if (updatedShow.status === "watched") {
       await singleUser.addShow(updatedShow);
     }
-    res.status(201).send(updatedShow);
+    res.status(202).send(updatedShow);
   }
 );
 
