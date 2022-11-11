@@ -46,27 +46,22 @@ userRouter.get("/:id/shows", getSingleUser, async (req, res) => {
 // send 202 accepted status if successful
 // if user does not exist, return 404 not found status
 // if show does not exist, return 404 not found status
-userRouter.put(
-  "/:id/shows/:showId",
-
-  getSingleUser,
-  async (req, res) => {
-    const { singleUser } = req;
-    const showToUpdate = await Show.findByPk(req.params.showId);
-    if (!singleUser || !showToUpdate) {
-      return res.status(404).send("Not found");
-    }
-    const updatedShow = await showToUpdate.update(
-      { status: "watched" },
-      {
-        where: {
-          id: req.params.showId,
-        },
-      }
-    );
-    await singleUser.addShow(updatedShow);
-    res.status(202).send(updatedShow);
+userRouter.put("/:id/shows/:showId", getSingleUser, async (req, res) => {
+  const { singleUser } = req;
+  const showToUpdate = await Show.findByPk(req.params.showId);
+  if (!singleUser || !showToUpdate) {
+    return res.status(404).send("Not found");
   }
-);
+  const updatedShow = await showToUpdate.update(
+    { status: "watched" },
+    {
+      where: {
+        id: req.params.showId,
+      },
+    }
+  );
+  await singleUser.addShow(updatedShow);
+  res.status(202).send(updatedShow);
+});
 
 module.exports = userRouter;
