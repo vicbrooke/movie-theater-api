@@ -1,3 +1,4 @@
+const { validationResult } = require("express-validator");
 const { User, Show } = require("../models");
 
 async function getSingleUser(req, res, next) {
@@ -10,4 +11,12 @@ async function getSingleShow(req, res, next) {
   next();
 }
 
-module.exports = { getSingleUser, getSingleShow };
+async function checkErrors(req, res, next) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).send({ errors: errors.array() });
+  }
+  next();
+}
+
+module.exports = { getSingleUser, getSingleShow, checkErrors };

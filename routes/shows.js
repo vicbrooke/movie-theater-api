@@ -1,6 +1,9 @@
 const { Router } = require("express");
-const { body, validationResult } = require("express-validator");
-const { getSingleShow } = require("../middleware/helper-functions");
+const { body } = require("express-validator");
+const {
+  getSingleShow,
+  checkErrors,
+} = require("../middleware/helper-functions");
 const { Show } = require("../models");
 
 const showRouter = Router();
@@ -46,11 +49,8 @@ showRouter.get("/genres/:genre", async (req, res) => {
 showRouter.put(
   "/:listLocation/watched",
   body("rating").matches(/\d/).withMessage("Rating must be a number"),
+  checkErrors,
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).send({ errors: errors.array() });
-    }
     const allWatchedShows = await Show.findAll({
       where: { status: "watched" },
     });
