@@ -50,7 +50,7 @@ userRouter.put(
   body("status")
     .isLength({ min: 5, max: 25 })
     .withMessage("Status must be between 5 and 25 characters")
-    .matches(/^[a-zA-Z]$/)
+    .matches(/^[a-zA-Z-]+$/)
     .withMessage("Status can only contain letters"),
   getSingleUser,
   async (req, res) => {
