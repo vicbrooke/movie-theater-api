@@ -14,8 +14,8 @@ describe("User route", () => {
       beforeEach(async () => {
         res = await request(app).get("/users/");
       });
-      test("should respond with a 200 status code", () => {
-        expect(res.status).toBe(200);
+      test("should respond with a 302 status code", () => {
+        expect(res.status).toBe(302);
       });
       test("should respond with an array of user objects", () => {
         expect(Array.isArray(res.body)).toBe(true);
@@ -50,8 +50,8 @@ describe("User route", () => {
           .send({ rating: 3, status: "watched" });
         res = await request(app).get("/users/1/shows");
       });
-      test("should respond with 201 status with valid user and show ids", () => {
-        expect(res.statusCode).toBe(200);
+      test("should respond with 202 accepted status with valid user and show ids", () => {
+        expect(res.statusCode).toBe(202);
       });
       test("should respond with updated show object", () => {
         expect(res.body[0].rating).toBe(3);
@@ -65,11 +65,11 @@ describe("User route", () => {
   });
   describe("PUT requests", () => {
     describe("/:id.shows/:showId endpoint", () => {
-      test("should return 201 created status and for valid user and show ids", async () => {
+      test("should return 202 accepted status and for valid user and show ids", async () => {
         res = await request(app)
           .put("/users/1/shows/1")
           .send({ rating: 10, status: "watched" });
-        expect(res.statusCode).toBe(201);
+        expect(res.statusCode).toBe(202);
       });
       test("should return a 404 status if given invalid user id", async () => {
         res = await request(app)

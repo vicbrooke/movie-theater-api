@@ -1,16 +1,19 @@
 const { Router } = require("express");
 const { body } = require("express-validator");
 const { getSingleShow } = require("../middleware/helper-functions");
-const { User, Show } = require("../models");
+const { Show } = require("../models");
+
 const showRouter = Router();
 
 // GET all shows
+// // send 302 found status if successful
 showRouter.get("/", async (req, res) => {
   const allShows = await Show.findAll();
-  res.send(allShows);
+  res.status(302).send(allShows);
 });
 
 // GET one show - using an endpoint
+// send 302 found status if successful
 // if show does not exist, return 404 not found status
 showRouter.get("/:id", getSingleShow, async (req, res) => {
   const { singleShow } = req;
@@ -18,11 +21,12 @@ showRouter.get("/:id", getSingleShow, async (req, res) => {
   if (!singleShow) {
     res.status(404).send("Show not found");
   } else {
-    res.send(singleShow);
+    res.status(302).send(singleShow);
   }
 });
 
 // GET shows of specific genre - using an endpoint
+// send 302 found status if successful
 // if genre does not exist, return 404 not found status
 showRouter.get("/genres/:genre", async (req, res) => {
   const showsByGenre = await Show.findAll({
@@ -33,7 +37,7 @@ showRouter.get("/genres/:genre", async (req, res) => {
   if (showsByGenre.length === 0) {
     res.status(404).send(`No shows found for genre: ${req.params.genre}`);
   } else {
-    res.send(showsByGenre);
+    res.status(302).send(showsByGenre);
   }
 });
 
@@ -78,6 +82,7 @@ showRouter.put("/:id/updates", getSingleShow, async (req, res) => {
 });
 
 // DELETE a show
+// send 204 no content status if successful
 showRouter.delete("/:id/delete", getSingleShow, async (req, res) => {
   const { singleShow } = req;
   if (!singleShow) {
