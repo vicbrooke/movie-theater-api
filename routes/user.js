@@ -17,7 +17,7 @@ userRouter.get("/:id", getSingleUser, async (req, res) => {
   if (!singleUser) {
     res.status(404).send("User not found");
   } else {
-    res.send(singleUser);
+    res.status(302).send(singleUser);
   }
 });
 
